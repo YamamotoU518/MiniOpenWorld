@@ -1,7 +1,8 @@
 # MiniOpenWorld
 ## 操作方法
 マウスで視点移動  
-WASDで移動
+WASDで移動  
+Eボタンでメニュー画面を開く(現在のPlayerの情報など)
 
 ## 使用したアセット
 ・AllSky Free - 10 Sky / Skybox Set  
