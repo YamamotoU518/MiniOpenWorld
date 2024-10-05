@@ -1,3 +1,4 @@
+using UnityChan;
 using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
@@ -40,6 +41,23 @@ public class PlayerInput : MonoBehaviour
             foreach (var item in _iPlayerInput)
             {
                 item.InputBack();
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.W) ||
+            Input.GetKeyUp(KeyCode.S))
+        {
+            foreach (var item in _iPlayerInput)
+            {
+                item.Release();
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            foreach (var item in _iPlayerInput)
+            {
+                item.Attack();
             }
         }
     }

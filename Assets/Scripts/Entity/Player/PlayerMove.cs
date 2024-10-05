@@ -27,4 +27,14 @@ public class PlayerMove : MonoBehaviour, IPlayerInput
         var pos = gameObject.transform.position;
         gameObject.transform.position = new Vector3(pos.x, pos.y, pos.z - _speed);    
     }
+
+    public void Release()
+    {
+        
+    }
+
+    public void Attack()
+    {
+        
+    }
 }
