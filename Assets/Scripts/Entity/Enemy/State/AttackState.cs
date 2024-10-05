@@ -4,6 +4,9 @@ using UnityEngine;
 public class AttackState : IState
 {
     private EnemyBase _enemyBase = default;
+    private bool _isAttack = default;
+    private int _attackCount = 0; // 攻撃回数
+    private int _tactic = 1; // 体力の判定用
 
     public AttackState(EnemyBase enemyBase)
     {
@@ -12,7 +15,7 @@ public class AttackState : IState
     
     public void Enter()
     {
-        
+        Debug.Log("攻撃開始");
     }
 
     public void Execute()
@@ -22,7 +25,7 @@ public class AttackState : IState
 
     public void Exit()
     {
-        
+        Debug.Log("攻撃終了");
     }
     
     private static bool Probability(float percent)
@@ -33,44 +36,44 @@ public class AttackState : IState
         return probabilityRate < percent;
     }
     
-    // private void AttackStop()
-    // {
-    //     Debug.Log("攻撃終了");
-    //     _isAttack = false;
-    //     if (_currentState == EnemyState.Freeze) SetState(EnemyState.Chase);
-    //     else
-    //     {
-    //         Debug.LogError("a");
-    //         float percent = 0f;
-    //         switch (tactic)
-    //         {
-    //             case 1:
-    //                 percent = 100.0f;
-    //                 break;
-    //             case 2:
-    //                 if (_attackCount == 1) percent = 50.0f;
-    //                 else if (_attackCount == 2) percent = 100.0f;
-    //                 break;
-    //             case 3:
-    //                 if (_attackCount == 1) percent = 30.0f;
-    //                 else if (_attackCount == 2) percent = 70.0f;
-    //                 else if (_attackCount == 3) percent = 100.0f;
-    //                 break;
-    //         }
-    //
-    //         if (Probability(percent)) // 攻撃終了
-    //         {
-    //             SetState(EnemyState.Freeze);
-    //             _attackCount = 1;
-    //         }
-    //         else // 継続
-    //         {
-    //             SetState(EnemyState.Chase, _targetTransform);
-    //             _attackCount++;
-    //         }
-    //     }
-    // }
-    //
+    private void AttackStop()
+    {
+        Debug.Log("攻撃終了");
+        _isAttack = false;
+        //if (_currentState == EnemyState.Freeze) SetState(EnemyState.Chase);
+        // 上があったらelse
+        {
+            Debug.LogError("a");
+            float percent = 0f;
+            switch (_tactic)
+            {
+                case 1:
+                    percent = 100.0f;
+                    break;
+                case 2:
+                    if (_attackCount == 1) percent = 50.0f;
+                    else if (_attackCount == 2) percent = 100.0f;
+                    break;
+                case 3:
+                    if (_attackCount == 1) percent = 30.0f;
+                    else if (_attackCount == 2) percent = 70.0f;
+                    else if (_attackCount == 3) percent = 100.0f;
+                    break;
+            }
+    
+            if (Probability(percent)) // 攻撃終了
+            {
+                // SetState(EnemyState.Freeze);
+                _attackCount = 1;
+            }
+            else // 継続
+            {
+                // SetState(EnemyState.Chase, _targetTransform);
+                _attackCount++;
+            }
+        }
+    }
+    
     // private void Attack()
     // {
     //     if (_isAttack) return; 

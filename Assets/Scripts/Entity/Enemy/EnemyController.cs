@@ -5,10 +5,6 @@ using UnityEngine.AI;
 public class EnemyController : EnemyBase
 {
     private NavMeshAgent _navMeshAgent = default;
-    private bool _isAttack = false;
-    private int _attackCount = 0; // 攻撃回数
-    private int tactic = 1; // 体力の判定用
-
     private Transform _targetTransform = default;
     private WalkState _walkState = default;
     private ChaseState _chaseState = default;
