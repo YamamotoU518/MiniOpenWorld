@@ -8,4 +8,8 @@ public interface IPlayerInput
     public void InputForward();
     /// <summary> Sキーが押されたとき </summary>
     public void InputBack();
+    /// <summary> キーが離されたとき </summary>
+    public void Release();
+    /// <summary> 左クリックが押されたとき </summary>
+    public void Attack();
 }
