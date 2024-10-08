@@ -16,25 +16,26 @@ public class EyeSensor : MonoBehaviour
             //Debug.Log("Player発見");
             var playerDirection = other.transform.position - transform.position;
             var angle = Vector3.Angle(transform.forward, playerDirection);
-            if (angle <= _searchAngle)
+            
+            if (angle <= _searchAngle) // 視野角内
             {
                 _controller.transform.position = 
                     Vector3.Lerp(_controller.transform.position, other.gameObject.transform.position, 0.1f);
-                _enemyController.SetState(EnemyState.Chase, other.gameObject.transform);
+                _enemyController.ChangeStateByPlayerPos(other.gameObject.transform);
             }
             else
             {
                 _controller.transform.position = Vector3.Lerp(_controller.transform.position, transform.position, 0.1f);
-                _enemyController.SetState(EnemyState.Idle);
+                _enemyController.ChangeStateByPlayerPos(other.gameObject.transform, false);
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        //Debug.Log("Playerを見失いました");
+        Debug.Log("Playerを見失いました");
         _controller.transform.position = transform.position;
-        _enemyController.SetState(EnemyState.Idle);
+        _enemyController.ChangeStateByPlayerPos(other.gameObject.transform);
     }
 
     private void OnDrawGizmos()

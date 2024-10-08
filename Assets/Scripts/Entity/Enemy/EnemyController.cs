@@ -1,92 +1,63 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public enum EnemyState
-{
-    Idle, // なにもしていない
-    Walk, // 巡回中
-    Chase, // 戦闘中
-    Leave // 逃走中
-}
-
 /// <summary> Enemyの状態を制御するクラス </summary>
-public class EnemyController : MonoBehaviour
+public class EnemyController : EnemyBase
 {
-    [SerializeField] private EnemyState _currentState;
-    [SerializeField] private Quaternion _setRotation;
-    [SerializeField] private GameObject _WanderingArea; // 巡回するエリア
-    private Transform _targetTransform = default;
     private NavMeshAgent _navMeshAgent = default;
-    private Vector3 _destinationPos = default;
-    private float _timer = default; // 巡回中に次の行き先が決められる時間用
-    private float _wanderRadius = 10f; // 徘徊する範囲の半径
+    private Transform _targetTransform = default;
+    private WalkState _walkState = default;
+    private ChaseState _chaseState = default;
+    private LeaveState _leaveState = default;
+    private FreezeState _freezeState = default;
+    private AttackState _attackState = default;
     
-    private void Start()
+    protected override void OnStart()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
+
+        _freezeState = new FreezeState(this);
+        _chaseState = new ChaseState(this, _navMeshAgent, _freezeState);
+        _walkState = new WalkState(this, _navMeshAgent, _freezeState, gameObject.transform.position);
+        _leaveState = new LeaveState(this);
+        _attackState = new AttackState(this);
+        
+        ChangeState(_walkState);
     }
-
-    private void Update()
+    protected override void OnUpdate()
     {
-        if (_currentState == EnemyState.Chase)
-        {
-            if (_targetTransform == null)
-            {
-                SetState(EnemyState.Idle);
-            }
-            else
-            {
-                _destinationPos = _targetTransform.position;
-                _navMeshAgent.SetDestination(_destinationPos);
-            }
-
-            var dir = (_destinationPos - transform.position).normalized;
-            dir.y = 0;
-            Quaternion setRotation = Quaternion.LookRotation(dir);
-            transform.rotation = Quaternion.Slerp(transform.rotation, setRotation, _navMeshAgent.angularSpeed * 0.1f);
-        }
-        else if (_currentState == EnemyState.Walk)
-        {
-            _timer += Time.deltaTime;
-            if (_timer >= 5f)
-            {
-                Vector3 rmd = RandomNavPos(transform.position, _wanderRadius, 1);
-                
-            }
-        }
-        else if (_currentState == EnemyState.Leave)
-        {
-            
-        }
+        if (_currentState == _chaseState) { _chaseState.SetTransform(_targetTransform); }
     }
-
-    public void SetState(EnemyState state, Transform target = null)
+    
+    /// <summary> プレイヤーの位置によってstateを切り替える </summary>
+    /// <param name="playerTransform"> プレイヤーの位置 </param>
+    /// <param name="inViewAngle"> 視野角内か </param>
+    public void ChangeStateByPlayerPos(Transform playerTransform, bool inViewAngle = true)
     {
-        //Debug.Log($"現在のステートは{_currentState}");
-        _currentState = state;
-        if (_currentState == EnemyState.Idle)
+        _targetTransform = playerTransform;
+        var dis = (gameObject.transform.position - _targetTransform.position).sqrMagnitude;
+        
+        if (inViewAngle == false) // 視野角外ならidleStateに移行
         {
-            _navMeshAgent.isStopped = true;
+            _currentState = _idleState;
+            return;
         }
-        else if (_currentState == EnemyState.Chase)
+        
+        if (dis < 10f)
         {
-            _targetTransform = target;
-            _navMeshAgent.isStopped = false;
+            if (_currentState == _attackState) return;
+            ChangeState(_attackState);
         }
-    }
-
-    public EnemyState GetState()
-    {
-        return _currentState;
-    }
-
-    private static Vector3 RandomNavPos(Vector3 origin, float dist, int layermask)
-    {
-        Vector3 randDirection = Random.insideUnitSphere * dist;
-        randDirection += origin;
-
-        NavMesh.SamplePosition(randDirection, out var navHit, dist, layermask);
-
-        return navHit.position;
+        else if (dis < 15f)
+        {
+            if (_currentState == _chaseState) return;
+            ChangeState(_chaseState);
+            _chaseState.SetTransform(_targetTransform);
+        }
+        else
+        {
+            if (_currentState == _walkState) return;
+            ChangeState(_freezeState);
+        }
     }
 }
