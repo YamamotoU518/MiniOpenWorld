@@ -8,8 +8,7 @@ public class WalkState : IState
     private NavMeshAgent _navMeshAgent = default;
     private FreezeState _freezeState = default;
     private Vector3 _pos = default; // 生成された場所
-    private Vector3 _destination = default; // 目的地
-    private float _distance = 1f; // ついたとみなす距離
+    private readonly float _distance = 1f; // ついたとみなす距離
     private readonly float _wanderRadius = 20f; // 徘徊する範囲の半径
 
     public WalkState(EnemyBase enemyBase, NavMeshAgent navMeshAgent,  FreezeState freezeState, Vector3 pos)

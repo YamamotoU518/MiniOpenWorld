@@ -6,9 +6,7 @@ public class EyeContoller : MonoBehaviour
     [SerializeField] private Vector3 _posMin;
 
     [SerializeField] private Vector3 _posMax;
-
-    [SerializeField] private Transform _playerTransform;
-
+    
     private Vector3 _pos;
     
     private void Update()

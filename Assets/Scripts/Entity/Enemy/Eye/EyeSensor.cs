@@ -21,7 +21,7 @@ public class EyeSensor : MonoBehaviour
             {
                 _controller.transform.position = 
                     Vector3.Lerp(_controller.transform.position, other.gameObject.transform.position, 0.1f);
-                _enemyController.ChangeStateByPlayerPos(other.gameObject.transform);
+                _enemyController.ChangeStateByPlayerPos(other.gameObject.transform, true);
             }
             else
             {
@@ -35,7 +35,7 @@ public class EyeSensor : MonoBehaviour
     {
         Debug.Log("Playerを見失いました");
         _controller.transform.position = transform.position;
-        _enemyController.ChangeStateByPlayerPos(other.gameObject.transform);
+        _enemyController.ChangeStateByPlayerPos(other.gameObject.transform, true);
     }
 
     private void OnDrawGizmos()
