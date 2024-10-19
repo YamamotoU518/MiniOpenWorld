@@ -1,4 +1,3 @@
-using UnityChan;
 using UnityEngine;
 
 public class PlayerInput : MonoBehaviour

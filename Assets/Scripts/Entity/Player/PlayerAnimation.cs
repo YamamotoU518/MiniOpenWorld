@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour, IPlayerInput
@@ -41,16 +40,10 @@ public class PlayerAnimation : MonoBehaviour, IPlayerInput
             StartCoroutine(ResetAttack("Punch"));
             return;
         }
-        switch (_selectData._weaponId)
-        {
-            case 1:
-                _animator.SetBool("Attack", true);
-                break;
-            case 2:
-                _animator.SetBool("BowAttack", true);
-                StartCoroutine(ResetAttack("BowAttack"));
-                break;
-        }
+
+        var anim = _weaponDataStore.FindWithId(_selectData._weaponId).AnimName;
+        _animator.SetBool(anim, true);
+        StartCoroutine(ResetAttack(anim));
     }
     
     private IEnumerator ResetAttack(string name)
