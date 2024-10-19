@@ -53,7 +53,6 @@ public class AttackState : IState
     private async Task Attack()
     {
         if (_isAttack) return;
-        Debug.Log("攻撃");
         _isAttack = true;
         _canContinue = false;
         _navMeshAgent.isStopped = true;
@@ -61,8 +60,6 @@ public class AttackState : IState
         var dis = Vector3.Distance(_navMeshAgent.transform.position, _playerTransform.position);
         if (dis <= 5f)
         {
-            Debug.Log("近距離");
-            
             _playableDirector.time = 0;
             _playableDirector.Stop();
             _playableDirector.Play();
@@ -71,7 +68,6 @@ public class AttackState : IState
             {
                 await Task.Yield();
             }
-            Debug.Log("Animation終了");
         }
         else if (dis <= 10f)
         {
@@ -87,7 +83,6 @@ public class AttackState : IState
     
     private void AttackStop()
     {
-        Debug.Log($"{_attackCount}回目の攻撃終了");
         _isAttack = false;
         
         float percent = 0f;
