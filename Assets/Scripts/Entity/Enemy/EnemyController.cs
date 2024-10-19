@@ -1,11 +1,15 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Playables;
+using Cysharp.Threading.Tasks;
 
 /// <summary> Enemyの状態を制御するクラス </summary>
 public class EnemyController : EnemyBase
 {
+    [SerializeField] private Hp _hp;
     [SerializeField] private Animator _animator;
-    [SerializeField] private ParticleSystem _particle;
+    [SerializeField] private PlayableDirector _playableDirector;
+    [SerializeField, Header("Freezeのときにどのくらい止まるか")] private int _freezeTime;
     private NavMeshAgent _navMeshAgent = default;
     private Transform _targetTransform = default;
     private WalkState _walkState = default;
@@ -17,19 +21,20 @@ public class EnemyController : EnemyBase
     protected override void OnStart()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
+        var token = this.GetCancellationTokenOnDestroy();
 
-        _freezeState = new FreezeState(this);
+        _freezeState = new FreezeState(this, _freezeTime, token);
         _chaseState = new ChaseState(this, _navMeshAgent, _freezeState);
         _walkState = new WalkState(this, _navMeshAgent, _freezeState, gameObject.transform.position);
         _leaveState = new LeaveState(this);
-        _attackState = new AttackState(this, _navMeshAgent, _freezeState, _particle);
-        
+        _attackState = new AttackState(this, _navMeshAgent, _freezeState, _playableDirector);
+
         ChangeState(_walkState);
     }
+    
     protected override void OnUpdate()
     {
-        if (_currentState == _chaseState) { _chaseState.SetTransform(_targetTransform); }
-        if (_currentState == _attackState) { _attackState.SetTransform(_targetTransform); }
+        if (_currentState == _freezeState && !_isFreeze) ChangeState(_walkState);
     }
     
     /// <summary> プレイヤーの位置によってstateを切り替える </summary>
@@ -48,10 +53,10 @@ public class EnemyController : EnemyBase
         
         if (dis < 10f)
         {
-            if (_currentState == _attackState) return;
+            if (_currentState == _attackState || _isFreeze) return;
             ChangeState(_attackState);
             _attackState.SetTransform(_targetTransform);
-            _attackState.SetTactic(1);
+            _attackState.SetTactic((int)(4 - 3 * _hp.CurrentHp / _hp.MaxHp));
         }
         else if (dis < 15f)
         {
@@ -62,7 +67,7 @@ public class EnemyController : EnemyBase
         else
         {
             if (_currentState == _walkState) return;
-            ChangeState(_freezeState);
+            ChangeState(_walkState);
         }
     }
 }

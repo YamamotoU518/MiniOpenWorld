@@ -1,5 +1,7 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Playables;
 
 /// <summary> 戦闘ステート </summary>
 public class AttackState : IState
@@ -7,35 +9,36 @@ public class AttackState : IState
     private EnemyBase _enemyBase = default;
     private NavMeshAgent _navMeshAgent = default;
     private FreezeState _freezeState = default;
-    private Animator _animator = default;
-    private ParticleSystem _particle = default;
+    private PlayableDirector _playableDirector = default;
     private bool _isAttack = default;
     private int _attackCount = 0; // 攻撃回数
     private int _tactic = 1; // 体力によって確立に変化を持たせるためのパラメータ
     private Transform _playerTransform = default;
+    private bool _canContinue = false;
 
-    public AttackState(EnemyBase enemyBase,NavMeshAgent  navMeshAgent,FreezeState freezeState, ParticleSystem particle)
+    public AttackState(EnemyBase enemyBase,NavMeshAgent  navMeshAgent,FreezeState freezeState, PlayableDirector director)
     {
         _enemyBase = enemyBase;
         _navMeshAgent = navMeshAgent;
         _freezeState = freezeState;
-        //_animator = animator;
-        _particle = particle;
+        _playableDirector = director;
     }
     
     public void Enter()
     {
         Debug.Log("攻撃開始");
         _attackCount = 1;
+        _canContinue = true;
     }
 
-    public void Execute()
+    public async void Execute()
     {
-        Attack();
+        if (_canContinue) await Attack();
     }
 
     public void Exit()
     {
+        _playableDirector.time = _playableDirector.duration;
         Debug.Log("攻撃終了");
     }
     
@@ -47,40 +50,36 @@ public class AttackState : IState
         return probabilityRate < percent;
     }
     
-    private void Attack()
+    private async Task Attack()
     {
-        if (_isAttack) return; 
+        if (_isAttack) return;
+        Debug.Log("攻撃");
         _isAttack = true;
+        _canContinue = false;
         _navMeshAgent.isStopped = true;
         
         var dis = Vector3.Distance(_navMeshAgent.transform.position, _playerTransform.position);
         if (dis <= 5f)
         {
             Debug.Log("近距離");
-            _particle.Play();
-            // foreach (var action in _enemyActions)
-            // {
-            //     action.CloseRangeAttack();
-            //     yield return new WaitUntil(() => action.IsAttackFinished);
-            // }
+            
+            _playableDirector.time = 0;
+            _playableDirector.Stop();
+            _playableDirector.Play();
+                
+            while (_playableDirector.time < _playableDirector.duration - 0.01f)
+            {
+                await Task.Yield();
+            }
+            Debug.Log("Animation終了");
         }
         else if (dis <= 10f)
         {
             Debug.Log("中距離");
-            // foreach (var action in _enemyActions)
-            // {
-            //     action.MediumRangeAttack();
-            //     yield return new WaitUntil(() => action.IsAttackFinished);
-            // }
         }
         else
         {
             Debug.Log("遠距離");
-            // foreach (var action in _enemyActions)
-            // {
-            //     action.LongRangeAttack();
-            //     yield return new WaitUntil(() => action.IsAttackFinished);
-            // }
         }
         
         AttackStop();
@@ -114,44 +113,10 @@ public class AttackState : IState
         }
         else // 継続
         {
+            _canContinue = true;
             _attackCount++;
         }
     }
-    
-    // private IEnumerator PerformAttack()
-    // {
-    //     var dis = Vector3.Distance(_navMeshAgent.transform.position, _playerTransform.position);
-    //     if (dis <= 5f)
-    //     {
-    //         Debug.Log("近距離");
-    //         foreach (var action in _enemyActions)
-    //         {
-    //             action.CloseRangeAttack();
-    //             yield return new WaitUntil(() => action.IsAttackFinished);
-    //         }
-    //     }
-    //     else if (dis <= 10f)
-    //     {
-    //         Debug.Log("中距離");
-    //         foreach (var action in _enemyActions)
-    //         {
-    //             action.MediumRangeAttack();
-    //             yield return new WaitUntil(() => action.IsAttackFinished);
-    //         }
-    //     }
-    //     else
-    //     {
-    //         Debug.Log("遠距離");
-    //         foreach (var action in _enemyActions)
-    //         {
-    //             action.LongRangeAttack();
-    //             yield return new WaitUntil(() => action.IsAttackFinished);
-    //         }
-    //     }
-    //     
-    //     AttackStop();
-    //     Debug.Log("stop");
-    // }
     
     public void SetTransform(Transform playerTransform)
     {
