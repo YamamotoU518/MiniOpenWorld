@@ -9,10 +9,12 @@ public class WeaponDataBase : ScriptableObject
     [SerializeField] private int _damage;
     [SerializeField] private int _id;
     [SerializeField] private Sprite _sprite;
+    [SerializeField] private string _animName;
 
     public string Name => _name;
     public GameObject Obj => _ogj;
     public int Damage => _damage;
     public int Id => _id;
     public Sprite Sprite => _sprite;
+    public string AnimName => _animName;
 }
