@@ -5,9 +5,9 @@ using UnityEngine.AI;
 public class WalkState : IState
 {
     private readonly EnemyBase _enemyBase = default;
-    private NavMeshAgent _navMeshAgent = default;
-    private FreezeState _freezeState = default;
-    private Vector3 _pos = default; // 生成された場所
+    private readonly NavMeshAgent _navMeshAgent = default;
+    private readonly FreezeState _freezeState = default;
+    private readonly Vector3 _pos = default; // 生成された場所
     private readonly float _distance = 1f; // ついたとみなす距離
     private readonly float _wanderRadius = 20f; // 徘徊する範囲の半径
 
@@ -23,7 +23,6 @@ public class WalkState : IState
     {
         RandomNavPos(_pos, _wanderRadius, 1);
         _navMeshAgent.isStopped = false;
-        Debug.Log("巡回を始めます");
     }
 
     public void Execute()
@@ -34,7 +33,6 @@ public class WalkState : IState
     public void Exit()
     {
         _navMeshAgent.isStopped = true;
-        Debug.Log("到着しました");
     }
 
     private void Walk()

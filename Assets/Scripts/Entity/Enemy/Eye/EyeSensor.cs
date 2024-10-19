@@ -33,7 +33,6 @@ public class EyeSensor : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("Playerを見失いました");
         _controller.transform.position = transform.position;
         _enemyController.ChangeStateByPlayerPos(other.gameObject.transform, true);
     }

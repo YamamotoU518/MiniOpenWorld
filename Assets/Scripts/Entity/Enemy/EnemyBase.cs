@@ -32,6 +32,5 @@ public class EnemyBase : MonoBehaviour
         _currentState = newState;
         _currentStateName = _currentState.GetType().Name;
         _currentState.Enter();
-        Debug.Log("ステート変更");
     }
 }

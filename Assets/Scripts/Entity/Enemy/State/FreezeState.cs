@@ -17,9 +17,8 @@ public class FreezeState : IState
         _token = token;
     }
 
-    public async void Enter()
+    public void Enter()
     {
-        Debug.Log("止まります");
         _enemyBase._isFreeze = true;
         StartFreezeTimer().Forget();
     }
@@ -32,7 +31,6 @@ public class FreezeState : IState
     public void Exit()
     {
         _enemyBase._isFreeze = false;
-        Debug.Log("動きます");
     }
 
     private async UniTask StartFreezeTimer()

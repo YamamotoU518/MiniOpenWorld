@@ -19,7 +19,6 @@ public class ChaseState : IState
 
     public void Enter()
     {
-        Debug.Log("追跡中");
         _navMeshAgent.isStopped = false;
     }
 
@@ -42,7 +41,6 @@ public class ChaseState : IState
     public void Exit()
     {
         _navMeshAgent.isStopped = true;
-        Debug.Log("追跡終了");
     }
 
     public void SetTransform(Transform playerTransform)
