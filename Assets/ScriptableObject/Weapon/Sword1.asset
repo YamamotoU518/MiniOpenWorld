@@ -17,3 +17,4 @@ MonoBehaviour:
   _damage: 10
   _id: 1
   _sprite: {fileID: 21300000, guid: ee9a1253f2438054e953264129fe834a, type: 3}
+  _animName: Attack
