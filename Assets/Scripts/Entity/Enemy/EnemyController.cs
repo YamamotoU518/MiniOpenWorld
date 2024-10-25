@@ -8,7 +8,7 @@ public class EnemyController : EnemyBase
 {
     [SerializeField] private Hp _hp;
     [SerializeField] private Animator _animator;
-    [SerializeField] private PlayableDirector _playableDirector;
+    [SerializeField] private PlayableDirector[] _playableDirectors;
     [SerializeField, Header("Freezeのときにどのくらい止まるか")] private int _freezeTime;
     private NavMeshAgent _navMeshAgent;
     private Transform _targetTransform;
@@ -27,7 +27,7 @@ public class EnemyController : EnemyBase
         _chaseState = new ChaseState(this, _navMeshAgent, _freezeState);
         _walkState = new WalkState(this, _navMeshAgent, _freezeState, gameObject.transform.position);
         _leaveState = new LeaveState(this);
-        _attackState = new AttackState(this, _navMeshAgent, _freezeState, _playableDirector);
+        _attackState = new AttackState(this, _navMeshAgent, _freezeState, _playableDirectors);
 
         ChangeState(_walkState);
     }
