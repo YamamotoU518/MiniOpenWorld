@@ -4,11 +4,11 @@ using UnityEngine.AI;
 /// <summary> 追走ステート </summary>
 public class ChaseState : IState
 {
-    private readonly EnemyBase _enemyBase = default;
-    private NavMeshAgent _navMeshAgent = default;
-    private readonly FreezeState _freezeState = default;
-    private Vector3 _destination = default; // 目的地
-    private Transform _playerTransform = default;
+    private readonly EnemyBase _enemyBase;
+    private readonly NavMeshAgent _navMeshAgent;
+    private readonly FreezeState _freezeState;
+    private Vector3 _destination; // 目的地
+    private Transform _playerTransform;
 
     public ChaseState(EnemyBase enemyBase, NavMeshAgent navMeshAgent, FreezeState freezeState)
     {

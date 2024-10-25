@@ -1,7 +1,7 @@
 /// <summary> 逃走ステート </summary>
 public class LeaveState : IState
 {
-    private EnemyBase _enemyBase = default;
+    private EnemyBase _enemyBase;
 
     public LeaveState(EnemyBase enemyBase)
     {

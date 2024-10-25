@@ -7021,7 +7021,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _currentStateName: 
-  _beforeStateName: 
   _isFreeze: 0
   _hp: {fileID: 1002478494}
   _animator: {fileID: 2020695757}
@@ -13176,8 +13175,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 7.86092
-  m_Center: {x: 0, y: -2.4193382, z: 0}
+  m_Radius: 15
+  m_Center: {x: 0, y: -2.5, z: 0}
 --- !u!114 &2136868272
 MonoBehaviour:
   m_ObjectHideFlags: 0
