@@ -10,13 +10,13 @@ public class EnemyController : EnemyBase
     [SerializeField] private Animator _animator;
     [SerializeField] private PlayableDirector _playableDirector;
     [SerializeField, Header("Freezeのときにどのくらい止まるか")] private int _freezeTime;
-    private NavMeshAgent _navMeshAgent = default;
-    private Transform _targetTransform = default;
-    private WalkState _walkState = default;
-    private ChaseState _chaseState = default;
-    private LeaveState _leaveState = default;
-    private FreezeState _freezeState = default;
-    private AttackState _attackState = default;
+    private NavMeshAgent _navMeshAgent;
+    private Transform _targetTransform;
+    private WalkState _walkState;
+    private ChaseState _chaseState;
+    private LeaveState _leaveState;
+    private FreezeState _freezeState;
+    private AttackState _attackState;
     
     protected override void OnStart()
     {
@@ -51,14 +51,14 @@ public class EnemyController : EnemyBase
         _targetTransform = playerTransform;
         var dis = (gameObject.transform.position - _targetTransform.position).sqrMagnitude;
         
-        if (dis < 10f)
+        if (dis < 15f)
         {
             if (_currentState == _attackState || _isFreeze) return;
             ChangeState(_attackState);
             _attackState.SetTransform(_targetTransform);
             _attackState.SetTactic((int)(4 - 3 * _hp.CurrentHp / _hp.MaxHp));
         }
-        else if (dis < 15f)
+        else if (dis < 20f)
         {
             if (_currentState == _chaseState) return;
             ChangeState(_chaseState);

@@ -6,9 +6,9 @@ using Cysharp.Threading.Tasks;
 /// <summary> 硬直ステート </summary>
 public class FreezeState : IState
 {
-    private readonly EnemyBase _enemyBase = default;
-    private readonly float _freezeTime = default;
-    private readonly CancellationToken _token = default;
+    private readonly EnemyBase _enemyBase;
+    private readonly float _freezeTime;
+    private readonly CancellationToken _token;
 
     public FreezeState(EnemyBase enemyBase, float freezeTime, CancellationToken token)
     {

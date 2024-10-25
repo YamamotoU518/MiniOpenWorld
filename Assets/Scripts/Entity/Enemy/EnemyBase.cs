@@ -3,10 +3,9 @@ using UnityEngine;
 public class EnemyBase : MonoBehaviour
 {
     [SerializeField] private string _currentStateName;
-    [SerializeField] private string _beforeStateName;
-    protected IState _currentState = default;
-    protected IdleState _idleState = default;
-    public bool _isFreeze = false;
+    protected IState _currentState;
+    protected IdleState _idleState;
+    public bool _isFreeze;
     
     private void Start()
     {

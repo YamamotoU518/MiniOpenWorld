@@ -13,7 +13,6 @@ public class EyeSensor : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            //Debug.Log("Player発見");
             var playerDirection = other.transform.position - transform.position;
             var angle = Vector3.Angle(transform.forward, playerDirection);
             

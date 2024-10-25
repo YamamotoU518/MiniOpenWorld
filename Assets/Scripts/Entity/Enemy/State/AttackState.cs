@@ -6,15 +6,15 @@ using UnityEngine.Playables;
 /// <summary> 戦闘ステート </summary>
 public class AttackState : IState
 {
-    private EnemyBase _enemyBase = default;
-    private NavMeshAgent _navMeshAgent = default;
-    private FreezeState _freezeState = default;
-    private PlayableDirector _playableDirector = default;
-    private bool _isAttack = default;
-    private int _attackCount = 0; // 攻撃回数
+    private readonly EnemyBase _enemyBase;
+    private readonly NavMeshAgent _navMeshAgent;
+    private readonly FreezeState _freezeState;
+    private readonly PlayableDirector _playableDirector;
+    private bool _isAttack;
+    private int _attackCount; // 攻撃回数
     private int _tactic = 1; // 体力によって確立に変化を持たせるためのパラメータ
-    private Transform _playerTransform = default;
-    private bool _canContinue = false;
+    private Transform _playerTransform;
+    private bool _canContinue;
 
     public AttackState(EnemyBase enemyBase,NavMeshAgent  navMeshAgent,FreezeState freezeState, PlayableDirector director)
     {
@@ -56,8 +56,8 @@ public class AttackState : IState
         _isAttack = true;
         _canContinue = false;
         _navMeshAgent.isStopped = true;
-        
-        var dis = Vector3.Distance(_navMeshAgent.transform.position, _playerTransform.position);
+
+        var dis = (_navMeshAgent.transform.position - _playerTransform.position).sqrMagnitude;
         if (dis <= 5f)
         {
             _playableDirector.time = 0;
@@ -72,10 +72,26 @@ public class AttackState : IState
         else if (dis <= 10f)
         {
             Debug.Log("中距離");
+            _playableDirector.time = 0;
+            _playableDirector.Stop();
+            _playableDirector.Play();
+                
+            while (_playableDirector.time < _playableDirector.duration - 0.01f)
+            {
+                await Task.Yield();
+            }
         }
         else
         {
             Debug.Log("遠距離");
+            _playableDirector.time = 0;
+            _playableDirector.Stop();
+            _playableDirector.Play();
+                
+            while (_playableDirector.time < _playableDirector.duration - 0.01f)
+            {
+                await Task.Yield();
+            }
         }
         
         AttackStop();
