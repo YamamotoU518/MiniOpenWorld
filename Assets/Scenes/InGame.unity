@@ -7024,7 +7024,10 @@ MonoBehaviour:
   _isFreeze: 0
   _hp: {fileID: 1002478494}
   _animator: {fileID: 2020695757}
-  _playableDirector: {fileID: 417006075}
+  _playableDirectors:
+  - {fileID: 417006075}
+  - {fileID: 417006075}
+  - {fileID: 417006075}
   _freezeTime: 5
 --- !u!114 &1002478494
 MonoBehaviour:

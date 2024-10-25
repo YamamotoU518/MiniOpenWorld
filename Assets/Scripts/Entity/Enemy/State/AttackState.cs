@@ -9,24 +9,24 @@ public class AttackState : IState
     private readonly EnemyBase _enemyBase;
     private readonly NavMeshAgent _navMeshAgent;
     private readonly FreezeState _freezeState;
-    private readonly PlayableDirector _playableDirector;
+    private readonly PlayableDirector[] _playableDirectors;
     private bool _isAttack;
     private int _attackCount; // 攻撃回数
     private int _tactic = 1; // 体力によって確立に変化を持たせるためのパラメータ
     private Transform _playerTransform;
     private bool _canContinue;
+    private int _dir; // 現在どの距離の攻撃を行っているか
 
-    public AttackState(EnemyBase enemyBase,NavMeshAgent  navMeshAgent,FreezeState freezeState, PlayableDirector director)
+    public AttackState(EnemyBase enemyBase,NavMeshAgent  navMeshAgent,FreezeState freezeState, PlayableDirector[] directors)
     {
         _enemyBase = enemyBase;
         _navMeshAgent = navMeshAgent;
         _freezeState = freezeState;
-        _playableDirector = director;
+        _playableDirectors = directors;
     }
     
     public void Enter()
     {
-        Debug.Log("攻撃開始");
         _attackCount = 1;
         _canContinue = true;
     }
@@ -38,16 +38,7 @@ public class AttackState : IState
 
     public void Exit()
     {
-        _playableDirector.time = _playableDirector.duration;
-        Debug.Log("攻撃終了");
-    }
-    
-    private static bool Probability(float percent)
-    {
-        float probabilityRate = Random.value * 100.0f;
-    
-        if (percent == 100.0f && probabilityRate == percent) return true;
-        return probabilityRate < percent;
+        _playableDirectors[_dir].time = _playableDirectors[_dir].duration;
     }
     
     private async Task Attack()
@@ -60,11 +51,12 @@ public class AttackState : IState
         var dis = (_navMeshAgent.transform.position - _playerTransform.position).sqrMagnitude;
         if (dis <= 5f)
         {
-            _playableDirector.time = 0;
-            _playableDirector.Stop();
-            _playableDirector.Play();
+            _dir = 0;
+            _playableDirectors[0].time = 0;
+            _playableDirectors[0].Stop();
+            _playableDirectors[0].Play();
                 
-            while (_playableDirector.time < _playableDirector.duration - 0.01f)
+            while (_playableDirectors[0].time < _playableDirectors[0].duration - 0.01f)
             {
                 await Task.Yield();
             }
@@ -72,11 +64,12 @@ public class AttackState : IState
         else if (dis <= 10f)
         {
             Debug.Log("中距離");
-            _playableDirector.time = 0;
-            _playableDirector.Stop();
-            _playableDirector.Play();
+            _dir = 1;
+            _playableDirectors[1].time = 0;
+            _playableDirectors[1].Stop();
+            _playableDirectors[1].Play();
                 
-            while (_playableDirector.time < _playableDirector.duration - 0.01f)
+            while (_playableDirectors[1].time < _playableDirectors[1].duration - 0.01f)
             {
                 await Task.Yield();
             }
@@ -84,11 +77,12 @@ public class AttackState : IState
         else
         {
             Debug.Log("遠距離");
-            _playableDirector.time = 0;
-            _playableDirector.Stop();
-            _playableDirector.Play();
+            _dir = 2;
+            _playableDirectors[2].time = 0;
+            _playableDirectors[2].Stop();
+            _playableDirectors[2].Play();
                 
-            while (_playableDirector.time < _playableDirector.duration - 0.01f)
+            while (_playableDirectors[2].time < _playableDirectors[2].duration - 0.01f)
             {
                 await Task.Yield();
             }
@@ -127,6 +121,14 @@ public class AttackState : IState
             _canContinue = true;
             _attackCount++;
         }
+    }
+    
+    private static bool Probability(float percent)
+    {
+        float probabilityRate = Random.value * 100.0f;
+    
+        if (percent == 100.0f && probabilityRate == percent) return true;
+        return probabilityRate < percent;
     }
     
     public void SetTransform(Transform playerTransform)
